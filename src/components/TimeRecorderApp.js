@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './TimeRecorderApp.css'; // CSSファイルをインポート
 
 const TimeRecorderApp = () => {
   // モバイル向けにビューポートの高さを設定

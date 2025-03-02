@@ -1,0 +1,318 @@
+/* TimeRecorderApp.css */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  max-width: 48rem;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #e8f0fe, #f0e6ff);
+}
+
+.app-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #6d28d9;
+}
+
+.time-display {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  background: white;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.buttons-container {
+  margin-bottom: 1.5rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.start-button {
+  background: linear-gradient(to right, #4ade80, #22c55e);
+  color: white;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  width: 100%;
+  max-width: 16rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: scale(1);
+  transition: transform 0.2s;
+}
+
+.start-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to right, #22c55e, #16a34a);
+}
+
+.working-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.working-text {
+  margin-bottom: 0.5rem;
+  text-align: center;
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+.end-button {
+  background: linear-gradient(to right, #f87171, #ef4444);
+  color: white;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  width: 100%;
+  max-width: 16rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: scale(1);
+  transition: transform 0.2s;
+}
+
+.end-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to right, #ef4444, #dc2626);
+}
+
+.records-container {
+  width: 100%;
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.records-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.records-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #7c3aed;
+}
+
+.export-button {
+  background: linear-gradient(to right, #60a5fa, #3b82f6);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s;
+}
+
+.export-button:hover {
+  background: linear-gradient(to right, #3b82f6, #2563eb);
+}
+
+.export-button:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.record-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.table-header {
+  background: linear-gradient(to right, #f5f3ff, #ede9fe);
+}
+
+.header-cell {
+  border: 1px solid #e9d5ff;
+  padding: 0.5rem;
+  text-align: center;
+  color: #6d28d9;
+  font-weight: 600;
+}
+
+.table-row {
+  transition: background-color 0.2s;
+}
+
+.table-row:hover {
+  background-color: #f5f3ff;
+}
+
+.table-cell {
+  border: 1px solid #e9d5ff;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.edit-cell {
+  border: 1px solid #e9d5ff;
+  padding: 0.25rem;
+  background-color: #f0f9ff;
+}
+
+.edit-input {
+  border: 1px solid #93c5fd;
+  padding: 0.25rem;
+  width: 100%;
+  font-size: 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.edit-button {
+  color: #3b82f6;
+  background-color: #dbeafe;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.edit-button:hover {
+  color: #1d4ed8;
+  background-color: #bfdbfe;
+  transform: scale(1.05);
+}
+
+.save-button {
+  color: #16a34a;
+  background-color: #dcfce7;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.save-button:hover {
+  color: #15803d;
+  background-color: #bbf7d0;
+  transform: scale(1.05);
+}
+
+.cancel-button {
+  color: #6b7280;
+  background-color: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.cancel-button:hover {
+  color: #4b5563;
+  background-color: #e5e7eb;
+  transform: scale(1.05);
+}
+
+.delete-button {
+  color: #ef4444;
+  background-color: #fee2e2;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.delete-button:hover {
+  color: #dc2626;
+  background-color: #fecaca;
+  transform: scale(1.05);
+}
+
+.no-records {
+  text-align: center;
+  padding: 1rem;
+  color: #6b7280;
+}
+
+/* モバイル用スタイル */
+.mobile-edit-form {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 1rem;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+  border-top: 2px solid #e9d5ff;
+  z-index: 10;
+}
+
+.mobile-edit-header {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #7c3aed;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.mobile-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.mobile-edit-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.mobile-edit-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.mobile-cancel-button {
+  background-color: #e5e7eb;
+  color: #4b5563;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  width: 40%;
+  text-align: center;
+}
+
+.mobile-save-button {
+  background: linear-gradient(to right, #4ade80, #22c55e);
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  width: 40%;
+  text-align: center;
+}
