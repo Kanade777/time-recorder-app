@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/time-recorder-app/static/css/main.22fb416f.css",
-    "main.js": "/time-recorder-app/static/js/main.71973d2b.js",
+    "main.css": "/time-recorder-app/static/css/main.29797d1f.css",
+    "main.js": "/time-recorder-app/static/js/main.06f14690.js",
     "static/js/453.dd52d11c.chunk.js": "/time-recorder-app/static/js/453.dd52d11c.chunk.js",
     "index.html": "/time-recorder-app/index.html",
-    "main.22fb416f.css.map": "/time-recorder-app/static/css/main.22fb416f.css.map",
-    "main.71973d2b.js.map": "/time-recorder-app/static/js/main.71973d2b.js.map",
+    "main.29797d1f.css.map": "/time-recorder-app/static/css/main.29797d1f.css.map",
+    "main.06f14690.js.map": "/time-recorder-app/static/js/main.06f14690.js.map",
     "453.dd52d11c.chunk.js.map": "/time-recorder-app/static/js/453.dd52d11c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.22fb416f.css",
-    "static/js/main.71973d2b.js"
+    "static/css/main.29797d1f.css",
+    "static/js/main.06f14690.js"
   ]
 }
