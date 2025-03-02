@@ -23,6 +23,17 @@ const TimeRecorderApp = () => {
   const [startTime, setStartTime] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [editingRecord, setEditingRecord] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // 画面サイズの変更を検出
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // 現在時刻を更新する効果
   useEffect(() => {
@@ -78,6 +89,16 @@ const TimeRecorderApp = () => {
       endTimeInput: record.endTime,
       dateInput: record.date
     });
+    
+    // モバイルの場合、編集フォームが見えるようにスクロール
+    if (isMobile) {
+      setTimeout(() => {
+        const editRow = document.getElementById(`edit-row-${record.id}`);
+        if (editRow) {
+          editRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
   };
   
   // 編集をキャンセル
@@ -161,32 +182,41 @@ const TimeRecorderApp = () => {
 
   // スタイルを定義
   const styles = {
-    container: "flex flex-col items-center p-4 max-w-3xl mx-auto min-h-screen",
-    header: "text-2xl font-bold mb-4 text-center",
-    timeDisplay: "text-xl mb-4 text-center",
+    container: "flex flex-col items-center p-4 max-w-3xl mx-auto min-h-screen bg-gradient-to-b from-blue-50 to-purple-50",
+    header: "text-2xl font-bold mb-4 text-center text-purple-700",
+    timeDisplay: "text-xl mb-4 text-center bg-white p-3 rounded-lg shadow-md text-blue-600 font-medium",
     buttonsContainer: "mb-6 w-full flex justify-center",
-    startButton: "bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg text-lg w-full max-w-xs",
-    endButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-8 rounded-lg text-lg w-full max-w-xs",
-    workingText: "mb-2 text-center",
-    recordsTitle: "text-xl font-semibold",
-    exportButton: "bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded",
+    startButton: "bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-bold py-4 px-8 rounded-lg text-lg w-full max-w-xs shadow-lg transform hover:scale-105 transition-transform",
+    endButton: "bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 text-white font-bold py-4 px-8 rounded-lg text-lg w-full max-w-xs shadow-lg transform hover:scale-105 transition-transform",
+    workingText: "mb-2 text-center text-purple-600 font-semibold",
+    recordsContainer: "w-full bg-white rounded-lg shadow-md p-4",
+    recordsHeader: "flex justify-between mb-4 items-center",
+    recordsTitle: "text-xl font-semibold text-purple-700",
+    exportButton: "bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white px-4 py-2 rounded-lg shadow transform hover:scale-105 transition-transform",
     tableContainer: "overflow-x-auto w-full",
     table: "w-full border-collapse text-sm",
-    tableHeader: "bg-gray-100",
-    headerCell: "border p-1 text-center",
-    cell: "border p-1 text-center",
-    editInput: "border p-1 w-full text-xs",
+    tableHeader: "bg-gradient-to-r from-purple-100 to-blue-100",
+    headerCell: "border border-purple-200 p-2 text-center text-purple-700",
+    row: "hover:bg-blue-50 transition-colors",
+    cell: "border border-purple-200 p-2 text-center",
+    editCell: "border border-purple-200 p-1 bg-blue-50",
+    editInput: "border border-blue-300 p-1 w-full text-sm rounded focus:outline-none focus:ring-2 focus:ring-blue-400",
     actionButtonsContainer: "flex justify-center space-x-2",
-    editButton: "text-blue-500 hover:text-blue-700",
-    saveButton: "text-green-500 hover:text-green-700",
-    cancelButton: "text-gray-500 hover:text-gray-700",
-    deleteButton: "text-red-500 hover:text-red-700",
-    noRecordsText: "text-gray-500 text-center py-4"
+    editButton: "text-blue-500 hover:text-blue-700 bg-blue-100 px-2 py-1 rounded transform hover:scale-110 transition-transform",
+    saveButton: "text-green-500 hover:text-green-700 bg-green-100 px-2 py-1 rounded transform hover:scale-110 transition-transform",
+    cancelButton: "text-gray-500 hover:text-gray-700 bg-gray-100 px-2 py-1 rounded transform hover:scale-110 transition-transform",
+    deleteButton: "text-red-500 hover:text-red-700 bg-red-100 px-2 py-1 rounded transform hover:scale-110 transition-transform",
+    noRecordsText: "text-gray-500 text-center py-4",
+    mobileEditForm: "fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-lg shadow-lg border-t-2 border-purple-300 z-10",
+    mobileEditHeader: "text-lg font-bold text-purple-700 mb-2 text-center",
+    mobileEditGrid: "grid grid-cols-1 gap-3",
+    mobileEditLabel: "text-sm text-gray-600 font-medium",
+    mobileEditActions: "flex justify-between mt-4"
   };
 
   return (
     <div className={styles.container} style={{ minHeight: 'calc(var(--vh, 1vh) * 100)' }}>
-      <h1 className={styles.header}>シンプル勤怠記録</h1>
+      <h1 className={styles.header}>勤怠記録</h1>
       
       {/* 現在時刻表示 */}
       <div className={styles.timeDisplay}>
@@ -216,8 +246,8 @@ const TimeRecorderApp = () => {
       </div>
       
       {/* 記録一覧 */}
-      <div className="w-full">
-        <div className="flex justify-between mb-4">
+      <div className={styles.recordsContainer}>
+        <div className={styles.recordsHeader}>
           <h2 className={styles.recordsTitle}>勤怠記録</h2>
           <button 
             onClick={exportCSV} 
@@ -242,11 +272,11 @@ const TimeRecorderApp = () => {
               </thead>
               <tbody>
                 {[...records].reverse().map(record => (
-                  <tr key={record.id}>
-                    {editingRecord && editingRecord.id === record.id ? (
-                      // 編集モード
+                  <tr key={record.id} className={styles.row} id={`edit-row-${record.id}`}>
+                    {editingRecord && editingRecord.id === record.id && !isMobile ? (
+                      // デスクトップ編集モード
                       <>
-                        <td className={styles.cell}>
+                        <td className={styles.editCell}>
                           <input
                             type="date"
                             className={styles.editInput}
@@ -254,7 +284,7 @@ const TimeRecorderApp = () => {
                             onChange={(e) => setEditingRecord({...editingRecord, dateInput: e.target.value})}
                           />
                         </td>
-                        <td className={styles.cell}>
+                        <td className={styles.editCell}>
                           <input
                             type="time"
                             className={styles.editInput}
@@ -263,7 +293,7 @@ const TimeRecorderApp = () => {
                             step="1"
                           />
                         </td>
-                        <td className={styles.cell}>
+                        <td className={styles.editCell}>
                           <input
                             type="time"
                             className={styles.editInput}
@@ -273,7 +303,7 @@ const TimeRecorderApp = () => {
                           />
                         </td>
                         <td className={styles.cell}>{record.duration}</td>
-                        <td className={styles.cell}>
+                        <td className={styles.editCell}>
                           <div className={styles.actionButtonsContainer}>
                             <button
                               onClick={handleSaveEdit}
@@ -324,6 +354,58 @@ const TimeRecorderApp = () => {
           <p className={styles.noRecordsText}>記録がありません</p>
         )}
       </div>
+      
+      {/* モバイル用の編集フォーム */}
+      {isMobile && editingRecord && (
+        <div className={styles.mobileEditForm}>
+          <h3 className={styles.mobileEditHeader}>勤怠記録を編集</h3>
+          <div className={styles.mobileEditGrid}>
+            <div>
+              <label className={styles.mobileEditLabel}>日付</label>
+              <input
+                type="date"
+                className={styles.editInput}
+                value={editingRecord.dateInput}
+                onChange={(e) => setEditingRecord({...editingRecord, dateInput: e.target.value})}
+              />
+            </div>
+            <div>
+              <label className={styles.mobileEditLabel}>開始時間</label>
+              <input
+                type="time"
+                className={styles.editInput}
+                value={editingRecord.startTimeInput}
+                onChange={(e) => setEditingRecord({...editingRecord, startTimeInput: e.target.value})}
+                step="1"
+              />
+            </div>
+            <div>
+              <label className={styles.mobileEditLabel}>終了時間</label>
+              <input
+                type="time"
+                className={styles.editInput}
+                value={editingRecord.endTimeInput}
+                onChange={(e) => setEditingRecord({...editingRecord, endTimeInput: e.target.value})}
+                step="1"
+              />
+            </div>
+          </div>
+          <div className={styles.mobileEditActions}>
+            <button
+              onClick={handleCancelEdit}
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg w-5/12"
+            >
+              キャンセル
+            </button>
+            <button
+              onClick={handleSaveEdit}
+              className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-bold py-2 px-4 rounded-lg w-5/12"
+            >
+              保存
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
