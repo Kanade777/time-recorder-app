@@ -20,8 +20,16 @@ const TimeRecorderApp = () => {
     const savedRecords = localStorage.getItem('timeRecords');
     return savedRecords ? JSON.parse(savedRecords) : [];
   });
-  const [isWorking, setIsWorking] = useState(false);
-  const [startTime, setStartTime] = useState(null);
+  // 勤務状態の初期化 - ローカルストレージから読み込む
+  const [isWorking, setIsWorking] = useState(() => {
+    const savedIsWorking = localStorage.getItem('isWorking');
+    return savedIsWorking === 'true';
+  });
+  // 開始時間の初期化 - ローカルストレージから読み込む
+  const [startTime, setStartTime] = useState(() => {
+    const savedStartTime = localStorage.getItem('startTime');
+    return savedStartTime ? new Date(JSON.parse(savedStartTime)) : null;
+  });
   const [currentTime, setCurrentTime] = useState(new Date());
   const [editingRecord, setEditingRecord] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -45,6 +53,18 @@ const TimeRecorderApp = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+  
+  // 勤務状態が変更されたときにローカルストレージに保存
+  useEffect(() => {
+    localStorage.setItem('isWorking', isWorking);
+    
+    // startTime がある場合は保存、ない場合は削除
+    if (startTime) {
+      localStorage.setItem('startTime', JSON.stringify(startTime));
+    } else {
+      localStorage.removeItem('startTime');
+    }
+  }, [isWorking, startTime]);
 
   // レコードが変更されたときにローカルストレージに保存
   useEffect(() => {
