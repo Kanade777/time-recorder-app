@@ -191,9 +191,10 @@ const TimeRecorderApp = () => {
     return date.toISOString().split("T")[0];
   };
 
-  // 時刻をフォーマット (HH:MM:SS)
+  // 時刻をフォーマット (HH:MM形式、秒を省略)
   const formatTime = (date) => {
-    return date.toTimeString().split(" ")[0];
+    const timeString = date.toTimeString().split(" ")[0]; // HH:MM:SS
+    return timeString.substring(0, 5); // HH:MM だけを取得
   };
 
   // 勤務時間を計算 (HH:MM形式、秒を省略)
