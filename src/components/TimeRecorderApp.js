@@ -118,8 +118,8 @@ const TimeRecorderApp = () => {
   const handleEdit = (record) => {
     setEditingRecord({
       ...record,
-      startTimeInput: record.startTime,
-      endTimeInput: record.endTime,
+      startTimeInput: record.startTime.substring(0, 5), // 秒を省略
+      endTimeInput: record.endTime.substring(0, 5), // 秒を省略
       dateInput: record.date,
       breakMinutesInput: record.breakMinutes || defaultBreakTime,
     });
@@ -144,12 +144,16 @@ const TimeRecorderApp = () => {
   const handleSaveEdit = () => {
     if (!editingRecord) return;
 
+    // 時間形式に秒を追加して完全な形式にする
+    const startTimeWithSeconds = editingRecord.startTimeInput + ":00";
+    const endTimeWithSeconds = editingRecord.endTimeInput + ":00";
+
     // 新しい日付と時間の文字列からDateオブジェクトを作成
     const startDate = new Date(
-      `${editingRecord.dateInput}T${editingRecord.startTimeInput}`
+      `${editingRecord.dateInput}T${startTimeWithSeconds}`
     );
     const endDate = new Date(
-      `${editingRecord.dateInput}T${editingRecord.endTimeInput}`
+      `${editingRecord.dateInput}T${endTimeWithSeconds}`
     );
 
     // 時間の差が負にならないか確認
@@ -169,8 +173,8 @@ const TimeRecorderApp = () => {
     const updatedRecord = {
       ...editingRecord,
       date: editingRecord.dateInput,
-      startTime: editingRecord.startTimeInput,
-      endTime: editingRecord.endTimeInput,
+      startTime: editingRecord.startTimeInput, // 秒なしで保存
+      endTime: editingRecord.endTimeInput, // 秒なしで保存
       breakMinutes: breakMinutes,
       duration: calculateDuration(startDate, endDate),
     };
@@ -487,32 +491,39 @@ const TimeRecorderApp = () => {
                                 }
                               />
                             </td>
+                            // デスクトップ編集モード
                             <td className="edit-cell">
                               <input
                                 type="time"
                                 className="edit-input"
-                                value={editingRecord.startTimeInput}
+                                value={editingRecord.startTimeInput.substring(
+                                  0,
+                                  5
+                                )} // HH:MM だけを使用
                                 onChange={(e) =>
                                   setEditingRecord({
                                     ...editingRecord,
                                     startTimeInput: e.target.value,
                                   })
                                 }
-                                step="1"
+                                // step="1" を削除
                               />
                             </td>
                             <td className="edit-cell">
                               <input
                                 type="time"
                                 className="edit-input"
-                                value={editingRecord.endTimeInput}
+                                value={editingRecord.endTimeInput.substring(
+                                  0,
+                                  5
+                                )} // HH:MM だけを使用
                                 onChange={(e) =>
                                   setEditingRecord({
                                     ...editingRecord,
                                     endTimeInput: e.target.value,
                                   })
                                 }
-                                step="1"
+                                // step="1" を削除
                               />
                             </td>
                             <td className="edit-cell">
@@ -620,14 +631,14 @@ const TimeRecorderApp = () => {
               <input
                 type="time"
                 className="edit-input"
-                value={editingRecord.startTimeInput}
+                value={editingRecord.startTimeInput.substring(0, 5)}
                 onChange={(e) =>
                   setEditingRecord({
                     ...editingRecord,
                     startTimeInput: e.target.value,
                   })
                 }
-                step="1"
+                // step="1" を削除
               />
             </div>
             <div>
@@ -635,14 +646,14 @@ const TimeRecorderApp = () => {
               <input
                 type="time"
                 className="edit-input"
-                value={editingRecord.endTimeInput}
+                value={editingRecord.endTimeInput.substring(0, 5)}
                 onChange={(e) =>
                   setEditingRecord({
                     ...editingRecord,
                     endTimeInput: e.target.value,
                   })
                 }
-                step="1"
+                // step="1" を削除
               />
             </div>
             <div>
