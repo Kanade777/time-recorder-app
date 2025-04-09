@@ -1,3 +1,4 @@
+import * as XLSX from "xlsx";
 import React, { useState, useEffect } from "react";
 import "./TimeRecorderApp.css"; // CSSファイルをインポート
 
@@ -195,60 +196,74 @@ const TimeRecorderApp = () => {
     return date.toTimeString().split(" ")[0];
   };
 
-  // 勤務時間を計算
+  // 勤務時間を計算 (HH:MM形式、秒を省略)
   const calculateDuration = (start, end) => {
     const diff = (end - start) / 1000; // 秒単位
     const hours = Math.floor(diff / 3600);
     const minutes = Math.floor((diff % 3600) / 60);
-    const seconds = Math.floor(diff % 60);
     return `${hours.toString().padStart(2, "0")}:${minutes
       .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      .padStart(2, "0")}`;
   };
 
-  // 実労働時間を計算（休憩時間を引いた時間）
+  // 実労働時間を計算（休憩時間を引いた時間、HH:MM形式）
   const calculateNetDuration = (record) => {
-    if (!record || !record.duration) return "00:00:00";
+    if (!record || !record.duration) return "00:00";
 
-    const [hours, minutes, seconds] = record.duration
-      .split(":")
-      .map((num) => parseInt(num, 10));
-    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-    const breakSeconds = (record.breakMinutes || 0) * 60;
+    // duration が HH:MM:SS 形式の場合
+    let hours, minutes;
+    if (record.duration.includes(":")) {
+      [hours, minutes] = record.duration
+        .split(":")
+        .map((num) => parseInt(num, 10));
+    } else {
+      // それ以外の場合は0とする
+      hours = 0;
+      minutes = 0;
+    }
 
-    const netSeconds = Math.max(0, totalSeconds - breakSeconds);
-    const netHours = Math.floor(netSeconds / 3600);
-    const netMinutes = Math.floor((netSeconds % 3600) / 60);
-    const netSecs = netSeconds % 60;
+    const totalMinutes = hours * 60 + minutes;
+    const breakMinutes = record.breakMinutes || defaultBreakTime;
 
-    return `${netHours.toString().padStart(2, "0")}:${netMinutes
+    const netMinutes = Math.max(0, totalMinutes - breakMinutes);
+    const netHours = Math.floor(netMinutes / 60);
+    const netMins = netMinutes % 60;
+
+    return `${netHours.toString().padStart(2, "0")}:${netMins
       .toString()
-      .padStart(2, "0")}:${netSecs.toString().padStart(2, "0")}`;
+      .padStart(2, "0")}`;
   };
 
-  // 実働時間の合計を計算する関数
+  // 実働時間の合計を計算する関数 (HH:MM形式)
   const calculateTotalWorkTime = () => {
     if (records.length === 0) return "0:00";
 
-    let totalSeconds = 0;
+    let totalMinutes = 0;
 
     records.forEach((record) => {
-      // 各記録から実働時間（休憩時間を差し引いた時間）を計算
-      const [hours, minutes, seconds] = record.duration
-        .split(":")
-        .map((num) => parseInt(num, 10));
-      const durationSeconds = hours * 3600 + minutes * 60 + seconds;
-      const breakSeconds = (record.breakMinutes || defaultBreakTime) * 60;
-      const netSeconds = Math.max(0, durationSeconds - breakSeconds);
+      // 各記録から実働時間を計算
+      let hours, minutes;
+      if (record.duration.includes(":")) {
+        [hours, minutes] = record.duration
+          .split(":")
+          .map((num) => parseInt(num, 10));
+      } else {
+        hours = 0;
+        minutes = 0;
+      }
 
-      totalSeconds += netSeconds;
+      const durationMinutes = hours * 60 + minutes;
+      const breakMinutes = record.breakMinutes || defaultBreakTime;
+      const netMinutes = Math.max(0, durationMinutes - breakMinutes);
+
+      totalMinutes += netMinutes;
     });
 
     // 合計時間を時間と分に変換
-    const totalHours = Math.floor(totalSeconds / 3600);
-    const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
+    const totalHours = Math.floor(totalMinutes / 60);
+    const remainingMinutes = totalMinutes % 60;
 
-    return `${totalHours}:${totalMinutes.toString().padStart(2, "0")}`;
+    return `${totalHours}:${remainingMinutes.toString().padStart(2, "0")}`;
   };
 
   // 休憩時間を表示用にフォーマット
@@ -261,35 +276,60 @@ const TimeRecorderApp = () => {
       .padStart(2, "0")}`;
   };
 
-  // CSV形式でデータをエクスポート
-  const exportCSV = () => {
+  // // CSV形式でデータをエクスポート
+  // const exportCSV = () => {
+  //   if (records.length === 0) return;
+
+  //   const headers = [
+  //     "日付",
+  //     "開始時間",
+  //     "終了時間",
+  //     "休憩時間(分)",
+  //     "総勤務時間",
+  //     "実労働時間",
+  //   ];
+  //   const csvContent = [
+  //     headers.join(","),
+  //     ...records.map(
+  //       (record) =>
+  //         `${record.date},${record.startTime},${record.endTime},${
+  //           record.breakMinutes || defaultBreakTime
+  //         },${record.duration},${calculateNetDuration(record)}`
+  //     ),
+  //   ].join("\n");
+
+  //   const blob = new Blob([csvContent], { type: "text/csv" });
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement("a");
+  //   a.href = url;
+  //   a.download = `勤怠記録_${formatDate(new Date())}.csv`;
+  //   a.click();
+  //   URL.revokeObjectURL(url);
+  // };
+
+  // Excelとしてデータをエクスポート
+  const exportExcel = () => {
     if (records.length === 0) return;
 
-    const headers = [
-      "日付",
-      "開始時間",
-      "終了時間",
-      "休憩時間(分)",
-      "総勤務時間",
-      "実労働時間",
-    ];
-    const csvContent = [
-      headers.join(","),
-      ...records.map(
-        (record) =>
-          `${record.date},${record.startTime},${record.endTime},${
-            record.breakMinutes || defaultBreakTime
-          },${record.duration},${calculateNetDuration(record)}`
-      ),
-    ].join("\n");
+    // エクスポート用のデータ配列を作成
+    const exportData = records.map((record) => ({
+      日付: record.date,
+      開始時間: record.startTime,
+      終了時間: record.endTime,
+      "休憩時間(分)": record.breakMinutes || defaultBreakTime,
+      総勤務時間: record.duration,
+      実労働時間: calculateNetDuration(record),
+    }));
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `勤怠記録_${formatDate(new Date())}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    // ワークブックとワークシートを作成
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    // ワークシートをワークブックに追加
+    XLSX.utils.book_append_sheet(wb, ws, "勤怠記録");
+
+    // Excelファイルとして保存
+    XLSX.writeFile(wb, `勤怠記録_${formatDate(new Date())}.xlsx`);
   };
 
   return (
@@ -324,14 +364,14 @@ const TimeRecorderApp = () => {
       <div className="records-container">
         <div className="records-header">
           <h2 className="records-title">
-            合計実働: {calculateTotalWorkTime()}
+            総労働時間: {calculateTotalWorkTime()}
           </h2>
           <button
-            onClick={exportCSV}
+            onClick={exportExcel}
             className="export-button"
             disabled={records.length === 0}
           >
-            CSVエクスポート
+            Excelエクスポート
           </button>
         </div>
 
